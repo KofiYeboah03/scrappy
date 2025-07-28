@@ -380,7 +380,7 @@
                 <option value="5/60">5/60</option>
                 <option value="5/100">5/100</option>
                 <option value="5/25">5/25</option>
-                <option value="5/15">5/25</option>
+                <option value="5/15">5/15</option>
                 <option value="10/100">10/100</option>
                 <option value="10/60">10/60</option>
                 <option value="10/80">10/80</option>
@@ -410,6 +410,8 @@
                 <option value="I-CREDIT 350-E1C">I-CREDIT 350-E1C</option>
                 <option value="MBH POWER-MN123E">MBH POWER-MN123E</option>
                 <option value="LONGI">LONGI</option>
+                <option value="SMART CASH (BXC)-RD363Q">SMART CASH (BXC)-RD363Q</option>
+                <option value="KUNKUN">KUNKUN</option>
             </select>
         </div>
     </div>
@@ -460,19 +462,20 @@
 
             <!-- Final Dataset Section -->
             <div class="section" id="finalDatasetSection" style="display: none;">
-                <h2>Final Dataset</h2>
-                <div id="progressContainer">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-                    </div>
-                    <p id="progressText">0 meters processed</p>
-                </div>
-                <div id="finalDataset"></div>
-                <div class="export-buttons">
-                    <button class="btn success" onclick="exportCSV()">Export CSV</button>
-                    <button class="btn success" onclick="exportExcel()">Export Excel</button>
-                </div>
-            </div>
+    <h2>Final Dataset</h2>
+    <div id="progressContainer">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+        <p id="progressText">0 meters processed</p>
+    </div>
+    <div id="finalDataset"></div>
+    <div class="export-buttons">
+        <button class="btn success" onclick="exportCSV()">Export CSV</button>
+        <button class="btn success" onclick="exportExcel()">Export Excel</button>
+        <button class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);" onclick="clearDataset()">Clear Dataset</button>
+    </div>
+</div>
         </div>
     </div>
 
@@ -725,85 +728,100 @@
             element.style.display = 'block';
         }
 
-        function lookupMeter() {
-            const oldMeterNumber = document.getElementById('oldMeterNumber').value.trim();
-            const boxNumber = document.getElementById('boxNumber').value.trim();
-        
-            if (!oldMeterNumber) {
-                alert('Please enter an old meter number');
-                return;
-            }
-        
-            if (!boxNumber) {
-                alert('Please enter a box number');
-                return;
-            }
+        // Modified lookupMeter function - Remove box number requirement
+function lookupMeter() {
+    const oldMeterNumber = document.getElementById('oldMeterNumber').value.trim();
+    const boxNumber = document.getElementById('boxNumber').value.trim();
 
-            if (replacementData.length === 0) {
-                alert('Please upload a replacement orders file first');
-                return;
-            }
+    if (!oldMeterNumber) {
+        alert('Please enter an old meter number');
+        return;
+    }
+
+     if (!focName) {
+        alert('Please select a FOC name');
+        return;
+    }
+
+    if (replacementData.length === 0) {
+        alert('Please upload a replacement orders file first');
+        return;
+    }
+
+    console.log('Searching for meter:', oldMeterNumber);
+    console.log('Available data:', replacementData);
+    
+    // Search through all possible column variations
+    const possibleColumns = [
+        'OLD METER NUMBER',
+        'OLDMETERNUMBER', 
+        'OLD_METER_NUMBER',
+        'METER NUMBER',
+        'METER_NUMBER',
+        'METERNUMBER',
+        'OLD METER',
+        'OLDMETER'
+    ];
+    
+    let meterData = null;
+    let foundColumn = '';
+    
+    // Try exact match first
+    for (const column of possibleColumns) {
+        meterData = replacementData.find(row => {
+            const value = row[column];
+            return value && value.toString().trim().toUpperCase() === oldMeterNumber.toUpperCase();
+        });
         
-            console.log('Searching for meter:', oldMeterNumber);
-            console.log('Available data:', replacementData);
+        if (meterData) {
+            foundColumn = column;
+            console.log(`Found meter using column: ${column}`);
+            break;
+        }
+    }
+    
+    // If no exact match, try partial match
+    if (!meterData) {
+        for (const column of possibleColumns) {
+            meterData = replacementData.find(row => {
+                const value = row[column];
+                return value && value.toString().trim().toUpperCase().includes(oldMeterNumber.toUpperCase());
+            });
             
-            // Search through all possible column variations
-            const possibleColumns = [
-                'OLD METER NUMBER',
-                'OLDMETERNUMBER', 
-                'OLD_METER_NUMBER',
-                'METER NUMBER',
-                'METER_NUMBER',
-                'METERNUMBER',
-                'OLD METER',
-                'OLDMETER'
-            ];
-            
-            let meterData = null;
-            let foundColumn = '';
-            
-            // Try exact match first
-            for (const column of possibleColumns) {
-                meterData = replacementData.find(row => {
-                    const value = row[column];
-                    return value && value.toString().trim().toUpperCase() === oldMeterNumber.toUpperCase();
-                });
-                
-                if (meterData) {
-                    foundColumn = column;
-                    console.log(`Found meter using column: ${column}`);
-                    break;
-                }
-            }
-            
-            // If no exact match, try partial match
-            if (!meterData) {
-                for (const column of possibleColumns) {
-                    meterData = replacementData.find(row => {
-                        const value = row[column];
-                        return value && value.toString().trim().toUpperCase().includes(oldMeterNumber.toUpperCase());
-                    });
-                    
-                    if (meterData) {
-                        foundColumn = column;
-                        console.log(`Found meter using partial match in column: ${column}`);
-                        break;
-                    }
-                }
-            }
-        
             if (meterData) {
-                currentMeterData = meterData;
-                displayMeterDetails(meterData, boxNumber, foundColumn);
-                document.getElementById('meterDetailsSection').style.display = 'block';
-                document.getElementById('manualEntrySection').style.display = 'block';
-                document.getElementById('imageUploadSection').style.display = 'block';
-                document.getElementById('dataSummarySection').style.display = 'block';
-            } else {
-                alert(`Meter "${oldMeterNumber}" not found in replacement orders.\n\nAvailable columns: ${fileHeaders.join(', ')}\n\nPlease check the meter number and try again.`);
+                foundColumn = column;
+                console.log(`Found meter using partial match in column: ${column}`);
+                break;
             }
         }
+    }
 
+    if (meterData) {
+        currentMeterData = meterData;
+        displayMeterDetails(meterData, boxNumber || 'N/A', foundColumn);
+        document.getElementById('meterDetailsSection').style.display = 'block';
+        document.getElementById('manualEntrySection').style.display = 'block';
+        document.getElementById('imageUploadSection').style.display = 'block';
+        document.getElementById('dataSummarySection').style.display = 'block';
+    } else {
+        alert(`Meter "${oldMeterNumber}" not found in replacement orders.\n\nAvailable columns: ${fileHeaders.join(', ')}\n\nPlease check the meter number and try again.`);
+    }
+}
+
+// New function to clear the dataset
+function clearDataset() {
+    if (processedMeters.length === 0) {
+        alert('Dataset is already empty');
+        return;
+    }
+    
+    if (confirm('Are you sure you want to clear the entire dataset? This action cannot be undone.')) {
+        processedMeters = [];
+        updateFinalDataset();
+        document.getElementById('finalDatasetSection').style.display = 'none';
+        alert('Dataset cleared successfully!');
+    }
+}
         function displayMeterDetails(data, boxNumber, foundColumn) {
             const detailsHtml = `
                 <div class="meter-row">
@@ -954,7 +972,7 @@
         return;
     }
 
-    const boxNumber = document.getElementById('boxNumber').value;
+    const boxNumber = document.getElementById('boxNumber').value || 'N/A';
     const rating = document.getElementById('rating').value;
     const focName = document.getElementById('focName').value;
     const yearOfMake = document.getElementById('yearOfMake').value;
