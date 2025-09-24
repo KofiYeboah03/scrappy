@@ -1339,13 +1339,12 @@ function clearDataset() {
             }
         }
 
-        function addToDataset() {
+       function addToDataset() {
     if (!currentMeterData) {
         alert('Please lookup a meter first');
         return;
     }
 
-            
     const boxNumber = document.getElementById('boxNumber').value || 'N/A';
     const rating = document.getElementById('rating').value;
     const yearOfMake = document.getElementById('yearOfMake').value;
@@ -1364,10 +1363,41 @@ function clearDataset() {
     const faultType = currentMeterData['FAULT TYPE'] || '';
     const reasonForRemoval = faultType || 'Faulty Meter';
 
+    // Get contractor code and map to FOC
+    const contractorCodeToFOC = {
+        'SP0026': 'THONY AJ',
+        'SP0025': 'WENDYDAM', 
+        'SP0024': 'EDEN-ROSAMART',
+        'SP0023': 'NAKOBUA',
+        'SP0022': 'JACKSON',
+        'SP0021': 'YEGBE',
+        'SP0020': 'WESTPOOL',
+        'SP0019': 'OTUB',
+        'SP0018': 'MEGAGIFY',
+        'SP0017': 'MK CABLE',
+        'SP0016': 'OHEMEN',
+        'SP0015': 'SIR CHARLES',
+        'SP0014': 'WEST VIDAM',
+        'SP0013': 'NAADEEABLE',
+        'SP0012': 'PRESTIGE',
+        'SP0011': 'HIMK',
+        'SP0010': 'NAADEEABLE',
+        'SP0009': 'ANDYMARK',
+        'SP0008': 'BERTH',
+        'SP0007': 'IONIC',
+        'SP0006': 'KOSMEN',
+        'SP0005': 'MINYA',
+        'SP0004': 'SIMVID',
+        'SP0003': 'SIMVID'
+    };
+    
+    const contractorCode = currentMeterData['CONTRACTOR CODE'] || currentMeterData['CONTRACTORCODE'] || '';
+    const focName = contractorCodeToFOC[contractorCode] || contractorCode || 'Unknown FOC';
+
     const processedMeter = {
         boxNumber: boxNumber,
-        servicePointNumber: currentMeterData['SERVICE POINT NUMBER'] || '',
-        meterNumber: currentMeterData['OLD METER NUMBER'] || '',
+        servicePointNumber: currentMeterData['SERVICE POINT NUMBER'] || currentMeterData['SERVICEPOINTNUMBER'] || currentMeterData['SERVICE_POINT_NUMBER'] || '',
+        meterNumber: currentMeterData['OLD METER NUMBER'] || currentMeterData['OLDMETERNUMBER'] || currentMeterData['OLD_METER_NUMBER'] || '',
         differentMeterNumber: '',
         ppmCm: 'PPM',
         finalReading: finalReadingValue,
@@ -1381,7 +1411,7 @@ function clearDataset() {
         simCard: '',
         cableLength: '',
         rating: rating || '',
-        dateRemoved: currentMeterData['DATE STARTED'] || '',
+        dateRemoved: currentMeterData['DATE STARTED'] || currentMeterData['DATESTARTED'] || currentMeterData['DATE_STARTED'] || '',
         reasonForRemoval: reasonForRemoval,
         breaker: '',
         foc: focName
