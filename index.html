@@ -1075,25 +1075,19 @@
             element.style.display = 'block';
         }
 
-        // Modified lookupMeter function - Remove box number requirement
-function lookupMeter() {
-    const oldMeterNumber = document.getElementById('oldMeterNumber').value.trim();
-    const boxNumber = document.getElementById('boxNumber').value.trim();
+      function lookupMeter() {
+      const oldMeterNumber = document.getElementById('oldMeterNumber').value.trim();
+      const boxNumber = document.getElementById('boxNumber').value.trim();
 
-    if (!oldMeterNumber) {
+      if (!oldMeterNumber) {
         alert('Please enter an old meter number');
         return;
-    }
+      }
 
-     if (!focName) {
-        alert('Please select a FOC name');
-        return;
-    }
-
-    if (replacementData.length === 0) {
+      if (replacementData.length === 0) {
         alert('Please upload a replacement orders file first');
         return;
-    }
+      }
 
     console.log('Searching for meter:', oldMeterNumber);
     console.log('Available data:', replacementData);
@@ -1170,23 +1164,55 @@ function clearDataset() {
     }
 }
         function displayMeterDetails(data, boxNumber, foundColumn) {
-            const detailsHtml = `
-                <div class="meter-row">
-                    <h3>Found Meter Details</h3>
-                    <div class="data-entry">
-                        <div><strong>Box Number:</strong> ${boxNumber}</div>
-                        <div><strong>Found in Column:</strong> ${foundColumn}</div>
-                        <div><strong>Service Point Number:</strong> ${data['SERVICE POINT NUMBER'] || data['SERVICEPOINTNUMBER'] || data['SERVICE_POINT_NUMBER'] || 'N/A'}</div>
-                        <div><strong>Old Meter Number:</strong> ${data[foundColumn] || 'N/A'}</div>
-                        <div><strong>Customer Name:</strong> ${data['CUSTOMER NAME'] || data['CUSTOMERNAME'] || data['CUSTOMER_NAME'] || 'N/A'}</div>
-                        <div><strong>Date Started:</strong> ${data['DATE STARTED'] || data['DATESTARTED'] || data['DATE_STARTED'] || 'N/A'}</div>
-                        <div><strong>Fault Type:</strong> ${data['FAULT TYPE'] || data['FAULTTYPE'] || data['FAULT_TYPE'] || 'N/A'}</div>
-                    </div>
-                </div>
-            `;
-            document.getElementById('meterDetails').innerHTML = detailsHtml;
-        }
-
+    // Get contractor code and map to FOC
+    const contractorCodeToFOC = {
+        'SP0026': 'THONY AJ',
+        'SP0025': 'WENDYDAM', 
+        'SP0024': 'EDEN-ROSAMART',
+        'SP0023': 'NAKOBUA',
+        'SP0022': 'JACKSON',
+        'SP0021': 'YEGBE',
+        'SP0020': 'WESTPOOL',
+        'SP0019': 'OTUB',
+        'SP0018': 'MEGAGIFY',
+        'SP0017': 'MK CABLE',
+        'SP0016': 'OHEMEN',
+        'SP0015': 'SIR CHARLES',
+        'SP0014': 'WEST VIDAM',
+        'SP0013': 'NAADEEABLE',
+        'SP0012': 'PRESTIGE',
+        'SP0011': 'HIMK',
+        'SP0010': 'NAADEEABLE',
+        'SP0009': 'ANDYMARK',
+        'SP0008': 'BERTH',
+        'SP0007': 'IONIC',
+        'SP0006': 'KOSMEN',
+        'SP0005': 'MINYA',
+        'SP0004': 'SIMVID',
+        'SP0003': 'SIMVID'
+    };
+    
+    const contractorCode = data['CONTRACTOR CODE'] || data['CONTRACTORCODE'] || '';
+    const focName = contractorCodeToFOC[contractorCode] || contractorCode || 'Unknown FOC';
+    
+    const detailsHtml = `
+        <div class="meter-row">
+            <h3>Found Meter Details</h3>
+            <div class="data-entry">
+                <div><strong>Box Number:</strong> ${boxNumber}</div>
+                <div><strong>Found in Column:</strong> ${foundColumn}</div>
+                <div><strong>Service Point Number:</strong> ${data['SERVICE POINT NUMBER'] || data['SERVICEPOINTNUMBER'] || data['SERVICE_POINT_NUMBER'] || 'N/A'}</div>
+                <div><strong>Old Meter Number:</strong> ${data[foundColumn] || 'N/A'}</div>
+                <div><strong>Contractor Code:</strong> ${contractorCode}</div>
+                <div><strong>FOC Name (Auto-mapped):</strong> ${focName}</div>
+                <div><strong>Customer Name:</strong> ${data['CUSTOMER NAME'] || data['CUSTOMERNAME'] || data['CUSTOMER_NAME'] || 'N/A'}</div>
+                <div><strong>Date Started:</strong> ${data['DATE STARTED'] || data['DATESTARTED'] || data['DATE_STARTED'] || 'N/A'}</div>
+                <div><strong>Fault Type:</strong> ${data['FAULT TYPE'] || data['FAULTTYPE'] || data['FAULT_TYPE'] || 'N/A'}</div>
+            </div>
+        </div>
+    `;
+    document.getElementById('meterDetails').innerHTML = detailsHtml;
+}
         function showDebugInfo() {
             const debugDiv = document.getElementById('debugInfo');
             let debugText = `File Headers: ${fileHeaders.join(', ')}\n\n`;
@@ -1319,34 +1345,6 @@ function clearDataset() {
         return;
     }
 
-// Contractor Names
-const contractorCodeToFOC = {
-    'SP0026': 'THONY AJ',
-    'SP0025': 'WENDYDAM', 
-    'SP0024': 'EDEN-ROSAMART',
-    'SP0023': 'NAKOBUA',
-    'SP0022': 'JACKSON',
-    'SP0021': 'YEGBE',
-    'SP0020': 'WESTPOOL',
-    'SP0019': 'OTUB',
-    'SP0018': 'MEGAGIFY',
-    'SP0017': 'MK CABLE',
-    'SP0016': 'OHEMEN',
-    'SP0015': 'SIR CHARLES',
-    'SP0014': 'WEST VIDAM',
-    'SP0013': 'NAADEEABLE',
-    'SP0012': 'PRESTIGE',
-    'SP0011': 'HIMK',
-    'SP0010': 'NAADEEABLE',
-    'SP0009': 'ANDYMARK',
-    'SP0008': 'BERTH',
-    'SP0007': 'IONIC',
-    'SP0006': 'KOSMEN',
-    'SP0005': 'MINYA',
-    'SP0004': 'SIMVID',
-    'SP0003': 'SIMVID'
-};
-
             
     const boxNumber = document.getElementById('boxNumber').value || 'N/A';
     const rating = document.getElementById('rating').value;
@@ -1390,7 +1388,7 @@ const contractorCodeToFOC = {
         dateRemoved: currentMeterData['DATE STARTED'] || '',
         reasonForRemoval: reasonForRemoval,
         breaker: '',
-        foc: focName ''
+        foc: focName
     };
 
     processedMeters.push(processedMeter);
