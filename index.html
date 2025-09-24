@@ -1319,9 +1319,37 @@ function clearDataset() {
         return;
     }
 
+// Contractor Names
+const contractorCodeToFOC = {
+    'SP0026': 'THONY AJ',
+    'SP0025': 'WENDYDAM', 
+    'SP0024': 'EDEN-ROSAMART',
+    'SP0023': 'NAKOBUA',
+    'SP0022': 'JACKSON',
+    'SP0021': 'YEGBE',
+    'SP0020': 'WESTPOOL',
+    'SP0019': 'OTUB',
+    'SP0018': 'MEGAGIFY',
+    'SP0017': 'MK CABLE',
+    'SP0016': 'OHEMEN',
+    'SP0015': 'SIR CHARLES',
+    'SP0014': 'WEST VIDAM',
+    'SP0013': 'NAADEEABLE',
+    'SP0012': 'PRESTIGE',
+    'SP0011': 'HIMK',
+    'SP0010': 'NAADEEABLE',
+    'SP0009': 'ANDYMARK',
+    'SP0008': 'BERTH',
+    'SP0007': 'IONIC',
+    'SP0006': 'KOSMEN',
+    'SP0005': 'MINYA',
+    'SP0004': 'SIMVID',
+    'SP0003': 'SIMVID'
+};
+
+            
     const boxNumber = document.getElementById('boxNumber').value || 'N/A';
     const rating = document.getElementById('rating').value;
-    const focName = document.getElementById('focName').value;
     const yearOfMake = document.getElementById('yearOfMake').value;
     const finalReading = document.getElementById('finalReading').value;
     const manufacturer = document.getElementById('manufacturer').value;
@@ -1329,6 +1357,10 @@ function clearDataset() {
     // Use extracted values if available, otherwise use manual entry or defaults
     const finalReadingValue = finalReading || extractedFinalReading || '0';
     const manufacturerValue = manufacturer || extractedManufacturer || 'SNEDA';
+
+    // Get contractor code from the Excel data
+    const contractorCode = currentMeterData['CONTRACTOR CODE'] || currentMeterData['CONTRACTORCODE'] || '';
+    const focName = contractorCodeToFOC[contractorCode] || contractorCode || 'Unknown FOC';
     
     // Map METER PHASE to PHASE (1/3)
     const meterPhase = currentMeterData['METER PHASE'] || '';
@@ -1358,7 +1390,7 @@ function clearDataset() {
         dateRemoved: currentMeterData['DATE STARTED'] || '',
         reasonForRemoval: reasonForRemoval,
         breaker: '',
-        foc: focName || ''
+        foc: focName ''
     };
 
     processedMeters.push(processedMeter);
