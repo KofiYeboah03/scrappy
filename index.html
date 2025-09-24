@@ -1355,10 +1355,6 @@ function clearDataset() {
     // Use extracted values if available, otherwise use manual entry or defaults
     const finalReadingValue = finalReading || extractedFinalReading || '0';
     const manufacturerValue = manufacturer || extractedManufacturer || 'SNEDA';
-
-    // Get contractor code from the Excel data
-    const contractorCode = currentMeterData['CONTRACTOR CODE'] || currentMeterData['CONTRACTORCODE'] || '';
-    const focName = contractorCodeToFOC[contractorCode] || contractorCode || 'Unknown FOC';
     
     // Map METER PHASE to PHASE (1/3)
     const meterPhase = currentMeterData['METER PHASE'] || '';
