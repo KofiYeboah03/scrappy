@@ -1633,7 +1633,7 @@ function addToDataset() {
         boxNumber: boxNumber,
         servicePointNumber: currentMeterData['SERVICE POINT NUMBER'] || currentMeterData['SERVICEPOINTNUMBER'] || currentMeterData['SERVICE_POINT_NUMBER'] || '',
         meterNumber: currentMeterData['OLD METER NUMBER'] || currentMeterData['OLDMETERNUMBER'] || currentMeterData['OLD_METER_NUMBER'] || '',
-        differentMeterNumber: '',
+        differentMeterNumber: document.getElementById('differentMeterNumber').value || '',
         ppmCm: 'PPM',
         finalReading: finalReadingValue,
         units: '-',
