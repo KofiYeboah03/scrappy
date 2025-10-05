@@ -688,8 +688,17 @@
     </div>
     <button class="btn" onclick="lookupMeter()">Lookup Meter Data</button>
     <button class="btn secondary" onclick="showDebugInfo()">Show Debug Info</button>
+    
+    <!-- Different Number on Field input - shows after lookup -->
+    <div id="differentNumberSection" style="display: none; margin-top: 20px;">
+        <div class="data-entry">
+            <div class="input-group">
+                <label for="differentMeterNumber">Different Number on Field:</label>
+                <input type="text" id="differentMeterNumber" placeholder="Enter different meter number if applicable" />
+            </div>
+        </div>
+    </div>
 </div>
-
             <!-- Meter Details Section -->
             <div class="section" id="meterDetailsSection" style="display: none;">
                 <h2>Meter Details</h2>
@@ -1192,6 +1201,9 @@ function clearDataset() {
         </div>
     `;
     document.getElementById('meterDetails').innerHTML = detailsHtml;
+    
+    // Show the different number input field
+    document.getElementById('differentNumberSection').style.display = 'block';
 }
         function showDebugInfo() {
             const debugDiv = document.getElementById('debugInfo');
@@ -1374,11 +1386,11 @@ function clearDataset() {
     const contractorCode = currentMeterData['CONTRACTOR CODE'] || currentMeterData['CONTRACTORCODE'] || '';
     const focName = contractorCodeToFOC[contractorCode] || contractorCode || 'Unknown FOC';
 
-    const processedMeter = {
-        boxNumber: boxNumber,
-        servicePointNumber: currentMeterData['SERVICE POINT NUMBER'] || currentMeterData['SERVICEPOINTNUMBER'] || currentMeterData['SERVICE_POINT_NUMBER'] || '',
-        meterNumber: currentMeterData['OLD METER NUMBER'] || currentMeterData['OLDMETERNUMBER'] || currentMeterData['OLD_METER_NUMBER'] || '',
-        differentMeterNumber: '',
+   const processedMeter = {
+    boxNumber: boxNumber,
+    servicePointNumber: currentMeterData['SERVICE POINT NUMBER'] || currentMeterData['SERVICEPOINTNUMBER'] || currentMeterData['SERVICE_POINT_NUMBER'] || '',
+    meterNumber: currentMeterData['OLD METER NUMBER'] || currentMeterData['OLDMETERNUMBER'] || currentMeterData['OLD_METER_NUMBER'] || '',
+    differentMeterNumber: document.getElementById('differentMeterNumber').value || '',
         ppmCm: 'PPM',
         finalReading: finalReadingValue,
         units: '-',
@@ -1507,6 +1519,7 @@ function clearForm(keepSectionsVisible = false) {
 function clearFormForNext() {
     document.getElementById('oldMeterNumber').value = '';
     document.getElementById('boxNumber').value = '';
+    document.getElementById('differentMeterNumber').value = '';
     document.getElementById('rating').value = '';
     document.getElementById('yearOfMake').value = '';
     document.getElementById('finalReading').value = '';
